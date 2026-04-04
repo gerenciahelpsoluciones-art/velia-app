@@ -9,17 +9,34 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
+  const [role, setRole] = useState<string>("vendedor"); // Por defecto vendedor para seguridad
 
   useEffect(() => {
-    const getUser = async () => {
+    const getData = async () => {
+      // Check for demo mode
+      const isDemo = document.cookie.includes("velia_demo=true");
+      if (isDemo) {
+        setRole("admin");
+        setUser({ email: "admin@velia.com", user_metadata: { full_name: "Admin VELIA" } });
+        return;
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+      if (user) {
+        setUser(user);
+        const { data: profile } = await supabase
+          .from("perfiles")
+          .select("rol")
+          .eq("id", user.id)
+          .single();
+        
+        if (profile) setRole(profile.rol);
+      }
     };
-    getUser();
+    getData();
   }, []);
 
   const handleLogout = async () => {
-    // Clear demo cookie if exists
     document.cookie = "velia_demo=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
     await supabase.auth.signOut();
     router.push("/login");
@@ -37,6 +54,7 @@ export default function Sidebar() {
     },
     {
       title: "Administración",
+      adminOnly: true,
       items: [
         { name: "Usuarios", href: "/usuarios", icon: <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg> },
         { name: "Proveedores", href: "/proveedores", icon: <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg> },
@@ -58,7 +76,9 @@ export default function Sidebar() {
       </div>
       
       <nav className="sidebar-nav">
-        {menuItems.map((section, idx) => (
+        {menuItems
+          .filter(section => !section.adminOnly || role === "admin")
+          .map((section, idx) => (
           <div key={idx}>
             <div className="sidebar-section-title">{section.title}</div>
             {section.items.map((item) => {
@@ -85,10 +105,10 @@ export default function Sidebar() {
           </div>
           <div className="sidebar-user-info" style={{ overflow: "hidden" }}>
             <div className="sidebar-user-name" style={{ fontSize: "0.85rem", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
-              {user?.user_metadata?.full_name || "Admin VELIA"}
+              {user?.user_metadata?.full_name || "Personal VELIA"}
             </div>
             <div className="sidebar-user-role" style={{ fontSize: "0.7rem", opacity: 0.5 }}>
-              {user?.email || "admin@velia.com"}
+              {role.toUpperCase()} • {user?.email}
             </div>
           </div>
         </div>

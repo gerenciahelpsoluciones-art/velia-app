@@ -85,6 +85,10 @@ body {
   padding: 2rem 2.5rem;
   max-width: 100%;
   transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(183, 110, 121, 0.03) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, rgba(6, 78, 59, 0.03) 0, transparent 50%);
+  background-attachment: fixed;
 }
 
 @media (max-width: 768px) {
@@ -300,14 +304,14 @@ body {
 }
 
 /* ===== ANIMATIONS ===== */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(15px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-@keyframes fadeInScale {
-  from { opacity: 0; transform: scale(0.95) translateY(8px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideInRight {
@@ -320,9 +324,10 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes modalIn {
-  from { opacity: 0; transform: scale(0.92) translateY(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
 }
 
 @keyframes shimmer {
@@ -337,12 +342,16 @@ body {
 }
 
 .animate-fade {
-  animation: fadeIn 0.6s ease-out forwards;
+  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   opacity: 0;
 }
 
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
 .animate-scale {
-  animation: fadeInScale 0.5s ease-out forwards;
+  animation: modalIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   opacity: 0;
 }
 
