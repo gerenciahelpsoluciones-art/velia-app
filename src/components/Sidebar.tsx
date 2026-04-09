@@ -22,24 +22,60 @@ export default function Sidebar() {
       }
 
       const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setUser(user);
-        const { data: profile } = await supabase
-          .from("perfiles")
-          .select("rol")
-          .eq("id", user.id)
-          .single();
+      const { data: { session } } = await supabase.auth.getSession();
+      const activeUser = user || session?.user;
+
+      if (activeUser) {
+        setUser(activeUser);
         
-        if (profile) setRole(profile.rol);
+        // Manual override for Carlos Saenz to be Administrator
+        if (activeUser.email === "carlos.saenz@velia.com") {
+          setRole("admin");
+        } else {
+          const { data: profile } = await supabase
+            .from("velia_perfiles")
+            .select("rol")
+            .eq("id", activeUser.id)
+            .single();
+
+          if (profile) {
+            setRole(profile.rol);
+          } else {
+            // "NO MIX" Policy: If user exists in Auth but not in Velia profiles, kick them out
+            console.error('ACCESO DENEGADO: Usuario sin perfil en Velia.');
+            handleLogout();
+          }
+        }
       }
     };
     getData();
   }, []);
 
   const handleLogout = async () => {
-    document.cookie = "velia_demo=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
-    await supabase.auth.signOut();
-    router.push("/login");
+    try {
+      // 1. Intentar cierre de sesión oficial en Supabase
+      await supabase.auth.signOut();
+      
+      // 2. Limpieza agresiva de Cookies (incluyendo las de Supabase SSR)
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+        document.cookie = name + "=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        document.cookie = name + "=; path=/; domain=" + window.location.hostname + "; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+      }
+
+      // 3. Limpiar localStorage por si acaso
+      localStorage.clear();
+      sessionStorage.clear();
+      
+    } catch (error) {
+      console.log("Error al cerrar sesión, forzando limpieza manual", error);
+    } finally {
+      // 4. Redirección final
+      window.location.href = "/login";
+    }
   };
 
   const menuItems = [

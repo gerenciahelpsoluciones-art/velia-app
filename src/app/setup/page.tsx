@@ -19,6 +19,7 @@ export default function Setup() {
       options: {
         data: {
           full_name: "Administrador VELIA",
+          app: "velia"
         }
       }
     });

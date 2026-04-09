@@ -24,7 +24,7 @@ export default function Home() {
       setLoading(true);
       
       // Fetch Products
-      const { data: prodData } = await supabase.from("productos").select("*");
+      const { data: prodData } = await supabase.from("velia_productos").select("*");
       if (prodData) setProducts(prodData.map(p => ({
         id: p.id,
         name: p.nombre,
@@ -36,7 +36,7 @@ export default function Home() {
 
       // Fetch Recent Sales for Activity
       const { data: salesData } = await supabase
-        .from("ventas")
+        .from("velia_ventas")
         .select("*")
         .order("fecha", { ascending: false })
         .limit(5);
@@ -46,7 +46,7 @@ export default function Home() {
       const today = new Date();
       today.setHours(0,0,0,0);
       const { data: todayData } = await supabase
-        .from("ventas")
+        .from("velia_ventas")
         .select("total")
         .gte("fecha", today.toISOString());
       

@@ -27,7 +27,7 @@ export default function Users() {
   const fetchProfiles = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("perfiles")
+      .from("velia_perfiles")
       .select("*")
       .order("created_at", { ascending: false });
 

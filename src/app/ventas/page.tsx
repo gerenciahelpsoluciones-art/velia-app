@@ -56,7 +56,7 @@ export default function Sales() {
   const fetchData = async () => {
     setLoading(true);
     // Load products
-    const { data: prodData } = await supabase.from("productos").select("*").order("nombre");
+    const { data: prodData } = await supabase.from("velia_productos").select("*").order("nombre");
     if (prodData) {
       setProducts(prodData.map(p => ({
         id: p.id,
@@ -70,7 +70,7 @@ export default function Sales() {
 
     // Load sales history
     const { data: salesData } = await supabase
-      .from("ventas")
+      .from("velia_ventas")
       .select("*, detalles_venta(*)")
       .order("fecha", { ascending: false })
       .limit(20);
@@ -139,7 +139,7 @@ export default function Sales() {
 
       // 1. Create Sale Header
       const { data: saleData, error: saleError } = await supabase
-        .from("ventas")
+        .from("velia_ventas")
         .insert([{
           subtotal: cartSubtotal,
           descuento: discountAmount,
@@ -166,12 +166,12 @@ export default function Sales() {
         });
 
         await supabase
-          .from("productos")
+          .from("velia_productos")
           .update({ stock: item.product.stock - item.quantity })
           .eq("id", item.product.id);
       }
 
-      await supabase.from("detalles_venta").insert(saleDetails);
+      await supabase.from("velia_detalles_venta").insert(saleDetails);
 
       // Refresh
       await fetchData();

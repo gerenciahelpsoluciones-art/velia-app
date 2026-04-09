@@ -42,7 +42,7 @@ export default function Suppliers() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data: profile } = await supabase
-          .from("perfiles")
+          .from("velia_perfiles")
           .select("rol")
           .eq("id", user.id)
           .single();
@@ -50,7 +50,7 @@ export default function Suppliers() {
       }
     }
 
-    const { data, error } = await supabase.from("proveedores").select("*").order("nombre");
+    const { data, error } = await supabase.from("velia_proveedores").select("*").order("nombre");
     if (data) {
       setSuppliers(data);
     }
@@ -90,12 +90,12 @@ export default function Suppliers() {
     try {
       if (editingSupplier) {
         const { error } = await supabase
-          .from("proveedores")
+          .from("velia_proveedores")
           .update(formData)
           .eq("id", editingSupplier.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("proveedores").insert([formData]);
+        const { error } = await supabase.from("velia_proveedores").insert([formData]);
         if (error) throw error;
       }
 
@@ -119,7 +119,7 @@ export default function Suppliers() {
 
     try {
       const { error } = await supabase
-        .from("proveedores")
+        .from("velia_proveedores")
         .delete()
         .eq("id", supplierToDelete.id);
       

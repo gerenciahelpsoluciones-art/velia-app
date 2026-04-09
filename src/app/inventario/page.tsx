@@ -45,7 +45,7 @@ export default function Inventory() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data: profile } = await supabase
-          .from("perfiles")
+          .from("velia_perfiles")
           .select("rol")
           .eq("id", user.id)
           .single();
@@ -54,7 +54,7 @@ export default function Inventory() {
     }
 
     const { data, error } = await supabase
-      .from("productos")
+      .from("velia_productos")
       .select("*")
       .order("nombre", { ascending: true });
 

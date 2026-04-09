@@ -29,7 +29,7 @@ export default function Reports() {
     startDate.setDate(startDate.getDate() - parseInt(timeRange));
 
     const { data, error } = await supabase
-      .from("ventas")
+      .from("velia_ventas")
       .select("*, detalles_venta(nombre_producto, cantidad)")
       .gte("fecha", startDate.toISOString())
       .order("fecha", { ascending: true });

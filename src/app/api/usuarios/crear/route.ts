@@ -15,13 +15,16 @@ export async function POST(request: Request) {
       email,
       password,
       email_confirm: true,
-      user_metadata: { full_name: nombre }
+      user_metadata: { 
+        full_name: nombre,
+        app: "velia"
+      }
     });
 
     if (authError) throw authError;
 
     // 2. Crear el perfil en la tabla de perfiles (por si el trigger tarda o falla)
-    const { error: profileError } = await supabaseAdmin.from("perfiles").insert([{
+    const { error: profileError } = await supabaseAdmin.from("velia_perfiles").insert([{
       id: authData.user.id,
       nombre,
       email,

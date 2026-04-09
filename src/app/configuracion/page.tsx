@@ -133,8 +133,8 @@ export default function Settings() {
         stock: p.stock
       }));
 
-      const { error } = await supabase.from("productos").insert(rowsToInsert);
-      if (error) throw error;
+      const { error: insertError } = await supabase.from("velia_productos").insert(rowsToInsert);
+      if (insertError) throw insertError;
 
       setUploadStatus("success");
       setUploadMessage(`¡${previewData.length} productos importados exitosamente!`);
@@ -153,7 +153,7 @@ export default function Settings() {
 
     try {
       // 1. Delete all existing products
-      const { error: deleteError } = await supabase.from("productos").delete().neq("id", "00000000-0000-0000-0000-000000000000"); // Hack to delete all in RLS
+      const { error: deleteError } = await supabase.from("velia_productos").delete().neq("id", "00000000-0000-0000-0000-000000000000"); // Hack to delete all in RLS
       if (deleteError) throw deleteError;
 
       // 2. Insert new products
@@ -165,7 +165,7 @@ export default function Settings() {
         stock: p.stock
       }));
 
-      const { error: insertError } = await supabase.from("productos").insert(rowsToInsert);
+      const { error: insertError } = await supabase.from("velia_productos").insert(rowsToInsert);
       if (insertError) throw insertError;
 
       setUploadStatus("success");
