@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
@@ -100,7 +100,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
         <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <img src="/logo.png" alt="VELIA Logo" className="sidebar-logo" />
@@ -109,6 +109,11 @@ export default function Sidebar() {
             <p>Premium Inventory</p>
           </div>
         </Link>
+        {onClose && (
+          <button className="mobile-close-btn" onClick={onClose} aria-label="Cerrar menú">
+             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        )}
       </div>
       
       <nav className="sidebar-nav">

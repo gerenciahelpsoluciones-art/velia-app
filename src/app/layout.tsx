@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import SidebarWrapper from "@/components/SidebarWrapper";
 import { headers } from "next/headers";
